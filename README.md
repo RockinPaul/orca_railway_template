@@ -4,6 +4,8 @@ A Remote [Orca](https://github.com/stablyai/orca) Server — the agent developme
 running headless on Railway so your worktrees, terminals and agent sessions live on a machine that
 stays awake. Pair your desktop, browser or phone to it.
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/orca)
+
 ## Service
 
 | Service | Base | Public | Role |
