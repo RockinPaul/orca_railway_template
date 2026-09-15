@@ -42,7 +42,13 @@ RUN set -eux; \
 # user is the supported path. ELECTRON_DISABLE_SANDBOX is still required because
 # Chromium's namespace sandbox needs CLONE_NEWUSER, which Railway's seccomp profile
 # denies — the container itself is the isolation boundary here.
-RUN useradd -m -u 1000 -s /bin/bash orca
+# The home directory must be /data/home in /etc/passwd, not just in ENV: gosu (like
+# su) resets HOME from the passwd entry for the target user, so an inherited
+# HOME=/data/home is silently overridden and Orca writes its state — including the
+# pairing identity — into the image layer, which every redeploy throws away.
+# -M because /data is a mount point that does not exist at build time; the
+# entrypoint creates and chowns it.
+RUN useradd -u 1000 -d /data/home -M -s /bin/bash orca
 
 ENV PORT=8080 \
     HOME=/data/home \

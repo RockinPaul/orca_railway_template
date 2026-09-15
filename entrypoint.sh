@@ -4,6 +4,13 @@ set -eu
 # Railway mounts the volume root-owned with a lost+found directory, so everything
 # lives in subdirectories, created here and handed to the unprivileged user.
 mkdir -p "${HOME}" "${NPM_CONFIG_PREFIX:-/data/npm-global}"
+
+# useradd ran with -M, so the shell skeleton was never copied. Seed it once, on a
+# genuinely empty home, so interactive shells behave normally.
+if [ ! -e "${HOME}/.bashrc" ]; then
+    cp -a /etc/skel/. "${HOME}/" 2>/dev/null || true
+fi
+
 chown -R orca:orca "${HOME}" "${NPM_CONFIG_PREFIX:-/data/npm-global}"
 
 # Orca advertises the address clients dial in its pairing payload, and it takes that
