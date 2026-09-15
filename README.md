@@ -13,8 +13,9 @@ stays awake. Pair your desktop, browser or phone to it.
 | `orca` | `debian:13-slim` + `orca-ide` 1.4.203 | **yes** | The runtime server, with `/data` as its home. |
 
 One service, no gateway: Orca serves plain HTTP and WebSocket on a port it takes from the
-environment, which is what Railway's edge expects. Upstream ships no container image and no
-Dockerfile, so this installs the published `.deb` and runs its documented `orca serve` mode.
+environment, which is what Railway's edge expects. Upstream publishes desktop packages rather than a
+server image — the Dockerfiles in its repository are CI harnesses for testing headless pairing — so
+this installs the published `.deb` and runs its documented `orca serve` mode.
 
 ## Variables
 
