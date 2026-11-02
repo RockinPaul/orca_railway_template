@@ -4,9 +4,9 @@
 # installs the published .deb and runs its documented headless mode, `orca serve`.
 FROM debian:13-slim
 
-ARG ORCA_VERSION=1.4.203
-ARG ORCA_SHA256_AMD64=7515eb6126364089cc3094ab65125c478ae897ed972e2d5f3d1d2f70d5b87e3b
-ARG ORCA_SHA256_ARM64=17140fea62d872337eab56c551a77d420eecdfc1b1fba740db6c3669e0753f1a
+ARG ORCA_VERSION=1.4.245
+ARG ORCA_SHA256_AMD64=54420e22d49dda9df66ed4e943b62844c955d4fd9d5c1059bf8f7702b760bc89
+ARG ORCA_SHA256_ARM64=9dd7cd390f5e1169e6f4a5234a829e732a3b3130302bf5066dbdcc96bf3d2f8d
 ARG TARGETARCH
 
 # The .deb pulls the whole GTK/X stack (~280 packages): Orca is an Electron app, and

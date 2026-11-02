@@ -2,7 +2,7 @@
 
 [Orca](https://github.com/stablyai/orca) is an agent development environment: worktrees, terminals
 and long-running coding-agent sessions in one workspace. This template deploys a **Remote Orca
-Server** — Orca 1.4.203 running headless on Railway — so that workspace lives on a machine that
+Server** — Orca 1.4.245 running headless on Railway — so that workspace lives on a machine that
 stays awake, and you pair your desktop, browser or phone to it.
 
 ## About Hosting Orca
@@ -42,7 +42,7 @@ agent accounts and configuration — across redeploys.
 
 One service builds from this template's repository:
 
-- **orca** — `debian:13-slim` with `orca-ide` 1.4.203 installed from the upstream `.deb`, checked
+- **orca** — `debian:13-slim` with `orca-ide` 1.4.245 installed from the upstream `.deb`, checked
   against a pinned SHA-256 for each architecture. It serves HTTP and WebSocket on port 8080, answers
   the platform health check on `/`, and mounts a volume at `/data`.
 

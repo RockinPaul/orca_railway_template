@@ -10,7 +10,7 @@ stays awake. Pair your desktop, browser or phone to it.
 
 | Service | Base | Public | Role |
 |---|---|---|---|
-| `orca` | `debian:13-slim` + `orca-ide` 1.4.203 | **yes** | The runtime server, with `/data` as its home. |
+| `orca` | `debian:13-slim` + `orca-ide` 1.4.245 | **yes** | The runtime server, with `/data` as its home. |
 
 One service, no gateway: Orca serves plain HTTP and WebSocket on a port it takes from the
 environment, which is what Railway's edge expects. Upstream publishes desktop packages rather than a
