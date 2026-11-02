@@ -27,6 +27,9 @@ agent accounts and configuration — across redeploys.
 ## Dependencies for Orca Hosting
 
 - A volume for the workspace, which the template creates.
+- A **Hobby plan or better** for actual agent sessions. The server idles at about 0.2 GB of RAM, and
+  a coding agent spawned inside a session needs more than the Free plan's 0.5 GB per service leaves.
+  Free and Trial volumes are also capped at 0.5 GB, below the 5 GB this template asks for.
 - Nothing else. No database, no external service, no account to register.
 
 ### Deployment Dependencies
