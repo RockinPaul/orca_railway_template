@@ -31,8 +31,14 @@ fi
 echo "orca: serving on :${PORT:-8080}, advertising ${ORCA_PAIRING_ADDRESS}"
 echo "orca: the pairing URL below is the credential for this runtime — treat it like a password."
 
-# xvfb-run supplies the virtual display Electron needs even with no window open.
-exec gosu orca xvfb-run -a orca-ide serve \
+# Linux serve uses the foreground plain-Node orcad runtime. Keep the CLI directly
+# below tini so SIGTERM reaches its handler, which awaits the daemon's shutdown
+# and lock release. An xvfb-run shell can exit first and strand orcad.lock.
+# A shared profile must have only one owner even across container PID namespaces,
+# where upstream cannot reliably inspect the other process. --no-fork execs the CLI
+# while holding the kernel lock, preserving signal delivery and automatic release.
+exec gosu orca flock --nonblock --no-fork --conflict-exit-code 75 \
+    "${HOME}/.orca-railway.lock" orca-ide serve \
     --port "${PORT:-8080}" \
     --pairing-address "${ORCA_PAIRING_ADDRESS}" \
     "$@"
