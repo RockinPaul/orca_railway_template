@@ -1,17 +1,17 @@
 # Orca — agent development environment (https://github.com/stablyai/orca)
 #
 # Upstream ships desktop packages, not container images, and no Dockerfile. This
-# installs the published .deb and runs its documented headless mode, `orca serve`.
+# installs the published .deb and runs its headless plain-Node `orca serve` mode.
 FROM debian:13-slim
 
-ARG ORCA_VERSION=1.4.245
-ARG ORCA_SHA256_AMD64=54420e22d49dda9df66ed4e943b62844c955d4fd9d5c1059bf8f7702b760bc89
-ARG ORCA_SHA256_ARM64=9dd7cd390f5e1169e6f4a5234a829e732a3b3130302bf5066dbdcc96bf3d2f8d
+ARG ORCA_VERSION=1.4.261
+ARG ORCA_SHA256_AMD64=86755b4c6e7e25d2ef4aadd5d2508bf52520d15f8ef45fa99e74cec7431e5c1c
+ARG ORCA_SHA256_ARM64=d1462086cb0aef7fade8983011642ae38adc08ebe54dc54d8f5d4a03b0b342bc
 ARG TARGETARCH
 
-# The .deb pulls the whole GTK/X stack (~280 packages): Orca is an Electron app, and
-# "headless" here means no window, not no display — xvfb is one of its own declared
-# dependencies. libasound2 is NOT declared but is required: without it the binary dies
+# The .deb still pulls the GTK/X stack: Orca's package includes its desktop app,
+# although Linux serve now uses orcad without a display. libasound2 is NOT declared
+# but is required by the packaged executable: without it the binary dies
 # with "error while loading shared libraries: libasound.so.2".
 #
 # git is needed for repo worktrees; node and npm are here so the coding agents people
@@ -29,19 +29,12 @@ RUN set -eux; \
         "https://github.com/stablyai/orca/releases/download/v${ORCA_VERSION}/orca-ide_${ORCA_VERSION}_${arch_pkg}.deb"; \
     echo "${sha}  /tmp/orca.deb" | sha256sum -c -; \
     apt-get install -y --no-install-recommends /tmp/orca.deb; \
-    # xauth: xvfb-run needs it and it is only a *recommends* of the xvfb chain, so
-    # --no-install-recommends drops it and every launch dies with
-    # "xvfb-run: error: xauth command not found".
-    apt-get install -y --no-install-recommends libasound2t64 xauth git openssh-client nodejs npm; \
+    apt-get install -y --no-install-recommends libasound2t64 git openssh-client nodejs npm; \
     rm -f /tmp/orca.deb; \
     rm -rf /var/lib/apt/lists/*; \
     orca-ide --version
 
-# Orca runs as a non-root user. Electron refuses to start as root without --no-sandbox,
-# and the CLI rejects unknown flags so that switch cannot be passed through; a non-root
-# user is the supported path. ELECTRON_DISABLE_SANDBOX is still required because
-# Chromium's namespace sandbox needs CLONE_NEWUSER, which Railway's seccomp profile
-# denies — the container itself is the isolation boundary here.
+# Orca runs as a non-root user; standard Linux serve uses plain-Node orcad.
 # The home directory must be /data/home in /etc/passwd, not just in ENV: gosu (like
 # su) resets HOME from the passwd entry for the target user, so an inherited
 # HOME=/data/home is silently overridden and Orca writes its state — including the
@@ -61,5 +54,5 @@ WORKDIR /data/home
 EXPOSE 8080
 
 COPY --chmod=755 entrypoint.sh /usr/local/bin/railway-entrypoint
-# tini reaps Xvfb and the Electron/Chromium process tree.
+# tini signals the foreground CLI, which waits for orcad to release its instance lock.
 ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/railway-entrypoint"]
