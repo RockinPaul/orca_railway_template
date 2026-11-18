@@ -69,26 +69,19 @@ encrypted channel, with a bad token closing the connection. Remote Orca Servers 
 a private tailnet or LAN reduces exposure, while this template uses a public Railway endpoint
 with the device credential as its access boundary.
 
-The custom `wss://` pairing host already permits public TCP sources in this tag; no extra
-`--allow-public` flag is needed. Source classification uses the actual TCP peer, not forwarded
-headers. A refusal control rejected a real public-classified test peer before HTTP; valid pairing
-was still required on the admitted path.
+The `wss://` pairing host accepts public connections in this release; no `--allow-public` flag is
+needed, and pairing is still required.
 
 **Existing deployments need preparation before the first upgrade.** If production tracks `main`,
 merging may trigger deployment before a backup can be taken. Check the effective restart policy,
 establish a maintenance hold where needed, gracefully stop the verified daemon in the **old**
 container, and validate a lock-free whole-volume backup plus the original image before proceeding.
-`ON_FAILURE` clean-exit behavior and a separate `ALWAYS` maintenance hold were rehearsed. Do not
-automatically delete foreign locks or assume this wrapper fixes the old container's shutdown.
+Do not automatically delete foreign locks or assume this wrapper fixes the old container's shutdown.
 Follow the [first-upgrade and rollback runbook](https://github.com/RockinPaul/orca_railway_template/blob/main/README.md#first-upgrade-from-the-old-wrapper).
 
-Upstream converts the legacy chat journal into a separate domain database. The populated
-Linux/amd64 rehearsal preserved 100 synthetic turns / 300 items through actual paginated RPC,
-including the first/final content, queued/empty chats, original pairing and files/settings.
-Image-only downgrade hides target-only chats; re-upgrade after old writes intentionally keeps a
-second history variant. Repeated target starts did not inflate record counts further. Restoring
-the untouched full backup and original image recovered the old state on a separate copy. No paid
-agent, provider-account, browser or live Railway rollout is claimed.
+On first start, upstream converts the legacy chat journal into a separate database; chats,
+pairing, files and settings carry over. Downgrading only the image afterwards hides chats created
+after the upgrade, so roll back by restoring the pre-upgrade backup together with the old image.
 
 Two limits are worth knowing. Running sessions end when the service redeploys, because a redeploy
 replaces the container — files on the volume survive, terminals and agent sessions do not. And
