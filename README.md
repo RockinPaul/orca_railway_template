@@ -116,8 +116,8 @@ a maintenance window and retain the original immutable deployment image plus a c
 of the **whole `/data` volume**, not only one SQLite file. The new wrapper cannot retroactively
 fix shutdown of the old container.
 
-1. Read the service's effective restart policy and active instances from Railway's control plane;
-   do not infer them from `railway.json`. With `ON_FAILURE`, the rehearsed clean exit 0 stays stopped.
+1. Read the service's effective restart policy and active instances from Railway's control plane.
+   With `ON_FAILURE`, the rehearsed clean exit 0 stays stopped.
    With `ALWAYS` or an external supervisor, establish an approved maintenance hold first. Confirm
    no replacement starts during backup. This procedure does not disable deployment automation.
 2. While still in the **old** container, stop active work and use its existing Node executable to
